@@ -1,0 +1,135 @@
+.navbutton {
+    background-color: #333;
+    padding: 0.3rem 1rem;
+    border-radius: 1rem;
+    display: flex;
+    width: 8rem;
+    justify-content: center;
+}
+
+.buttondiv {
+    display: flex;
+    justify-content: center;
+}
+
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1.5rem 0 0.5rem;
+    text-align: center;
+    overflow: auto;
+}
+
+#projects {
+    margin-top: 20px; 
+}
+
+.container {
+    display: flex;
+    gap: 20px; 
+    flex-wrap: nowrap; 
+    max-height: 900px; 
+    position: relative;
+    justify-content: space-between; 
+}
+
+.graphics, .animation, .code {
+    width: 300px;
+    height: 200px;
+    background-color: #ffffff;
+    margin: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+    border-radius: 8px; 
+    position: relative; 
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    padding: 20px; 
+    margin-top: 20px;
+}
+
+/* Use background images for the .graphics box */
+.graphics {
+    transition: margin-top 0.3s ease, all 0.3s ease;
+}
+
+/* Hover effect for .graphics, with PowerPoint image as background */
+.graphics:hover {
+    color: #ffffff; 
+    background-color: #333; 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+    width: 500px; 
+    height: 700px; 
+    background-image: url('new portfolio/powerpoint.jpg'); /* PowerPoint image as background */
+    background-size: cover;
+    background-position: center;
+    margin-top: 40px;
+    margin-right: 40px; 
+    animation: fadeImages 4s infinite;
+    transform: scale(1.05);
+}
+
+/* Hover effect for the animation box (color change only) */
+.animation:hover {
+    background-color: #333; 
+    color: #ffffff; 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover effect for the code box (color change only) */
+.code:hover {
+    background-color: #333; 
+    color: #ffffff; 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover effect for the title and description text */
+.graphics:hover h3, .animation:hover h3, .code:hover h3,
+.graphics:hover p, .animation:hover p, .code:hover p {
+    color: #ffffff;
+}
+
+/* Additional margin for the graphics box to prevent overlap with the "My Website" box */
+#contact {
+    margin-top: 140px;
+}
+
+/* Change layout to stack the boxes vertically when hovered */
+.container.hovered {
+    flex-direction: row; /* Keep horizontal layout */
+}
+
+.container.hovered .animation {
+    position: absolute; 
+    top: 20px; 
+    left: 320px; 
+    z-index: 10; 
+    margin-top: 20px; 
+}
+
+.container.hovered .code {
+    position: absolute; 
+    top: 240px; 
+    left: 320px; 
+    z-index: 5; 
+    margin-top: 20px; 
+}
+
+@keyframes fadeImages {
+    0% {
+        background-image: url('Exposed.png'); /* First image */
+        opacity: 1; 
+    }
+    50% {
+        background-image: url('Revitalize.png'); /* Second image */
+        opacity: 1; 
+    }
+    100% {
+        background-image: url('Exposed.png'); /* First image */
+        opacity: 1; 
+    }
+}

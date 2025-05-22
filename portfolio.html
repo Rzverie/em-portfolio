@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emmy's Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+   <style>
+    :root {
+      --primary: #ff4d6d;
+      --teal: #ff4d6d; 
+      --background-start: #0f0f11;
+      --background-end: #1a1a21;
+      --glass: rgba(255, 255, 255, 0.05);
+      --text: #e4e4e4;
+      --muted: #b4b4b4;
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, var(--background-start), var(--background-end));
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+      text-align: center;
+      line-height: 1.6;
+      letter-spacing: 0.3px;
+    }
+
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    header {
+      padding: 2rem 1rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+
+    }
+    nav a {
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: transform 0.3s ease, background-color var(--transition-speed), border var(--transition-speed);
+    }
+
+    nav a:hover {
+      transform: translateY(-4px);
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--primary);
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+    }
+
+    section {
+      background: var(--glass);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 4px 20px rgba(234, 103, 94, 0.05);
+      backdrop-filter: blur(4px);
+      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    section:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 25px rgba(234, 94, 94, 0.1);
+    }
+
+    section h2 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    section p {
+      margin: 0 auto;
+      max-width: 800px;
+      line-height: 1.7;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      width: 260px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 8px rgba(94, 234, 212, 0.08);
+      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    .card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 6px 14px #ff4d6d;
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .contact a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .resume {
+      margin-bottom: 2rem;
+      border-radius: 16px;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 4px 20px rgba(94, 234, 212, 0.05);
+      background: linear-gradient(135deg, #282c31, #a13939);
+      backdrop-filter: blur(4px);
+      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+    .resume:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 25px rgba(94, 234, 212, 0.1);
+    }
+    .resume h2 {
+      font-size: 1.6rem;
+      color: #fff;
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .resume p {
+      max-width: 800px;
+      margin: 0.5rem auto 1rem;
+      color: #eaeaea;
+      line-height: 1.7;
+    }
+    .resume-buttons {
+      margin-top: 1rem;
+    }
+    .resume-buttons button {
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #000;
+      border: none;
+      padding: 0.7rem 1.4rem;
+      border-radius: 10px;
+      margin: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    }
+    .resume-buttons button:hover {
+      background-color: #fff;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      font-size: 0.9rem;
+      color: #888;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 2rem;
+    }
+
+    .box {
+      height: 300px;
+      overflow: hidden;
+    }
+
+    .box video,
+    .box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+      nav a {
+        display: block;
+        margin: 0.5rem 0;
+      }
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    #progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 5px;
+      width: 0%;
+      background: var(--primary);
+      z-index: 9998;
+      transition: width 0.2s ease;
+    }
+
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--background-start);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid rgba(255, 255, 255, 0.2);
+      border-top: 6px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    .box img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.9);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  margin: auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 0 20px #000;
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<!-- Scroll Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Page Loading Screen -->
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+
+
+<header>
+  <h1>Emmy's Portfolio</h1>
+</header>
+
+
+<nav>
+  <a href="print design tab.html">Print Design</a>
+  <a href="certifications tab.html">Certifications</a>
+  <a href="motion graphics tab.html">Motion Graphics</a>
+  <a href="code tab.html">Code</a>
+  <a href="shop work tab.html">IT Shop Work</a>
+  <a href="portfolio.html">Home</a>
+</nav>
+
+<main>
+  <section class="intro">
+    <h2>Welcome</h2>
+    <p>Hello! I'm Emmy, a certified static and motion graphic designer/creator.</p>
+    <video src="images/video0.mp4" autoplay muted playsinline loop></video>
+
+  </section>
+
+  <section>
+    <h2>My Senior Project</h2>
+    <p>
+      For my senior project, I built a website to showcase my graphic portfolio and built another portfolio over the course of the year to show my experience learned at Vinal Tech. I also applied to colleges and planned for my future. I was accepted by over ten colleges in CT and around eight others nationwide, including Western New England with a 4-year presidential scholarship. Along the way, I am refining my skills and growing my creative work.
+    </p>
+  </section>
+
+  <section>
+    <h2>Project Examples</h2>
+    <div class="container">
+      <div class="card">
+        <h3>Exposed Prints</h3>
+        <p>Grunge, textured print set.</p>
+      </div>
+      <div class="card">
+        <h3>University Motion Design</h3>
+        <p>A complete animation made in After Effects.</p>
+      </div>
+      <div class="card">
+        <h3>Functioning Bot</h3>
+        <p>A bot functioning within Discord.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact">
+    <h2>My Website</h2>
+    <p>See my official gallery of projects at <a href="https://emmymclaughlindesign.com">emmymclaughlindesign.com</a></p>
+  </section>
+
+  <!-- RESTORED Resume & Cover Letter SECTION -->
+  <section class="resume">
+    <h2>RESUME & COVER LETTER</h2>
+    <p>View my resume, cover letter, and follow-up below:</p>
+    <div class="resume-buttons">
+      <a href="images/downloads/EM Resume.pdf" target="_blank" rel="noopener">
+        <button>View Resume</button>
+      </a>
+      <a href="images/downloads/EM Cover Letter.pdf" target="_blank" rel="noopener">
+        <button>View Cover Letter</button>
+      </a>
+      <a href="images/downloads/EM Follow-Up.pdf" target="_blank" rel="noopener">
+        <button>View Follow-Up</button>
+      </a>
+    </div>
+  </section>
+  
+
+<footer>
+  <p>&copy; Emmy 2025</p>
+</footer>
+
+<style>
+  /* Ensure the canvas fills the entire viewport */
+  #bgCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Prevent the canvas from blocking interactions */
+  }
+</style>
+
+<script>
+  const canvas = document.getElementById("bgCanvas");
+  const ctx = canvas.getContext("2d");
+
+  let width, height;
+  function resizeCanvas() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  const stars = [];
+  const starCount = 100;
+
+  // Generate stars
+  for (let i = 0; i < starCount; i++) {
+    stars.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: Math.random() * 1.2 + 0.5,
+      dx: (Math.random() - 0.5) * 0.2,
+      dy: (Math.random() - 0.5) * 0.2
+    });
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, width, height);
+    for (let i = 0; i < starCount; i++) {
+      const star = stars[i];
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+
+      // Connect nearby stars
+      for (let j = i + 1; j < starCount; j++) {
+        const other = stars[j];
+        const dx = star.x - other.x;
+        const dy = star.y - other.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 100) {
+          ctx.beginPath();
+          ctx.moveTo(star.x, star.y);
+          ctx.lineTo(other.x, other.y);
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+
+      // Move stars
+      star.x += star.dx;
+      star.y += star.dy;
+      if (star.x < 0 || star.x > width) star.dx *= -1;
+      if (star.y < 0 || star.y > height) star.dy *= -1;
+    }
+
+    requestAnimationFrame(drawStars);
+  }
+
+  drawStars();
+
+  // Scroll Progress Bar
+  window.addEventListener("scroll", () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.body.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    document.getElementById("progress-bar").style.width = `${progress}%`;
+  });
+
+  // Page Loader
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    if (loader) {
+      loader.style.opacity = 0;
+      loader.style.pointerEvents = "none";
+      setTimeout(() => loader.remove(), 500);
+    }
+  });
+</script>

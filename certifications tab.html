@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Certifications</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff4d6d;
+      --teal: #ff4d6d;
+      --background-start: #0f0f11;
+      --background-end: #1a1a21;
+      --glass: rgba(255, 255, 255, 0.05);
+      --text: #e4e4e4;
+      --muted: #b4b4b4;
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, var(--background-start), var(--background-end));
+      color: var(--text);
+      overflow-x: hidden;
+      position: relative;
+      text-align: center;
+      line-height: 1.6;
+      letter-spacing: 0.3px;
+    }
+
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    header {
+      padding: 2rem 1rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    nav a {
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: transform 0.3s ease, background-color var(--transition-speed), border var(--transition-speed);
+    }
+
+    nav a:hover {
+      transform: translateY(-4px);
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--primary);
+    }
+
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+    }
+
+    section {
+      background: var(--glass);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 4px 20px rgba(234, 103, 94, 0.05);
+      backdrop-filter: blur(4px);
+      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    section:hover {
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    section h2 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    section p {
+      margin: 0 auto;
+      max-width: 800px;
+      line-height: 1.7;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      width: 400px;
+      height: 400px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 8px rgba(94, 234, 212, 0.08);
+      cursor: pointer;
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-content {
+      margin: 10% auto;
+      width: 80%;
+      max-width: 800px;
+    }
+
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      color: #aaa;
+      font-size: 40px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      font-size: 0.9rem;
+      color: #888;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      nav a {
+        display: block;
+        margin: 0.5rem 0;
+      }
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+    /* Scroll Progress Bar */
+#progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 5px;
+  width: 0%;
+  background: var(--primary); /* Use your theme color */
+  z-index: 9998;
+  transition: width 0.2s ease;
+}
+
+/* Page Loading Animation */
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--background-start);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.2);
+  border-top: 6px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.container {
+  background-image: url('powerpoint.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain; /* or cover */
+}
+
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+  </style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<!-- Scroll Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Page Loading Screen -->
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+
+
+<header>
+  <h1>Certifications</h1>
+</header>
+
+<nav>
+  <a href="print design tab.html">Print Design</a>
+  <a href="certifications tab.html">Certifications</a>
+  <a href="motion graphics tab.html">Motion Graphics</a>
+  <a href="code tab.html">Code</a>
+  <a href="shop work tab.html">IT Shop Work</a>
+  <a href="portfolio.html">Home</a>
+</nav>
+
+<main>
+  <section class="intro">
+    <h2>Welcome</h2>
+    <p>My certifications acquired over the past 4 years.</p>
+  </section>
+
+  <!-- TestOut Certifications Section -->
+  <section id="testout-certs">
+    <h2>TestOut Certifications</h2>
+    <div class="container">
+      <div class="card" style="background-image:url('images/certs/it fundamentals.png')" onclick="openModal('images/certs/it fundamentals.png')">
+      </div>
+      <div class="card" style="background-image:url('images/certs/pc pro.png')" onclick="openModal('images/certs/pc pro.png')">
+      </div>
+    </div>
+  </section>
+
+    <!-- Microsoft Certifications Section -->
+<section id="microsoft-certs">
+  <h2>Microsoft Certifications</h2>
+  <div class="container">
+    <div class="card" style="background-image:url('images/certs/powerpoint.png')" onclick="openModal('images/certs/powerpoint.png')"></div>
+    <div class="card" style="background-image:url('images/certs/excel.png')" onclick="openModal('images/certs/excel.png')"></div>
+  </div>
+</section>
+
+ <!-- Adobe Certifications Section -->
+  <section id="microsoft-certs">
+    <h2>Adobe Certifications</h2>
+    <div class="container">
+      <div class="card" style="background-image:url('images/certs/Visual_Design.png')" onclick="openModal('images/certs/Visual_Design.png')">
+       
+      </div>
+      <div class="card" style="background-image:url('images/certs/Photoshop.png')" onclick="openModal('images/certs/Photoshop.png')">
+       
+      </div>
+      <div class="card" style="background-image:url('images/certs/Illustrator.png')" onclick="openModal('images/certs/Illustrator.png')">
+       
+      </div>
+    </div>
+  </section>
+
+  <!-- Google Certifications Section -->
+  <section id="google-certs">
+    <h2>Google Certifications</h2>
+    <div class="container">
+      <div class="card" style="background-image:url('images/certs/Google Data Analytics.png')" onclick="openModal('images/certs/Google Data Analytics.png')">
+        
+      </div>
+      <div class="card" style="background-image:url('images/certs/Google Digital Marketing.png')" onclick="openModal('images/certs/Google Digital Marketing.png')">
+        
+      </div>
+      <div class="card" style="background-image:url('images/certs/Google IT Automation.png')" onclick="openModal('images/certs/Google IT Automation.png')">
+        
+      </div>
+      <div class="card" style="background-image:url('images/certs/Google IT Support.png')" onclick="openModal('images/certs/Google IT Support.png')">
+        
+      </div>
+      <div class="card" style="background-image:url('images/certs/Google Project Management.png')" onclick="openModal('images/certs/Google Project Management.png')">
+        
+      </div>
+      <div class="card" style="background-image:url('images/certs/Google UX Design.png')" onclick="openModal('images/certs/Google UX Design.png')">
+       
+      </div>
+    </div>
+  </section>
+
+
+
+<footer>
+  <p>&copy; Emmy 2025</p>
+</footer>
+
+<!-- Modal -->
+<div id="myModal" class="modal">
+  <span class="close" onclick="closeModal()">&times;</span>
+  <div class="modal-content">
+    <img id="modalImage" src="" alt="Certificate">
+  </div>
+</div>
+
+<script>
+  function openModal(imageSrc) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('myModal').style.display = "block";
+  }
+
+  function closeModal() {
+    document.getElementById('myModal').style.display = "none";
+  }
+
+  window.onclick = function(event) {
+    if (event.target === document.getElementById('myModal')) {
+      closeModal();
+    }
+  }
+
+  const canvas = document.getElementById("bgCanvas");
+  const ctx = canvas.getContext("2d");
+  
+  let width, height;
+  function resizeCanvas() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  const stars = [];
+  const starCount = 100;
+
+  for (let i = 0; i < starCount; i++) {
+    stars.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: Math.random() * 1.2 + 0.5,
+      dx: (Math.random() - 0.5) * 0.2,
+      dy: (Math.random() - 0.5) * 0.2
+    });
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, width, height);
+    for (let i = 0; i < starCount; i++) {
+      const star = stars[i];
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+
+      for (let j = i + 1; j < starCount; j++) {
+        const other = stars[j];
+        const dx = star.x - other.x;
+        const dy = star.y - other.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 100) {
+          ctx.beginPath();
+          ctx.moveTo(star.x, star.y);
+          ctx.lineTo(other.x, other.y);
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+
+      star.x += star.dx;
+      star.y += star.dy;
+      if (star.x < 0 || star.x > width) star.dx *= -1;
+      if (star.y < 0 || star.y > height) star.dy *= -1;
+    }
+
+    requestAnimationFrame(drawStars);
+  }
+
+  drawStars();
+   // Scroll Progress Bar
+   window.addEventListener("scroll", () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.body.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    document.getElementById("progress-bar").style.width = `${progress}%`;
+  });
+
+  // Page Loader
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    if (loader) {
+      loader.style.opacity = 0;
+      loader.style.pointerEvents = "none";
+      setTimeout(() => loader.remove(), 500);
+    }
+  });
+</script>
+
+</body>
+</html>

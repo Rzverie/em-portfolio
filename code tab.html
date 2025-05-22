@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Projects</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff4d6d;
+      --background-start: #0f0f11;
+      --background-end: #1a1a21;
+      --glass: rgba(255, 255, 255, 0.05);
+      --text: #e4e4e4;
+      --muted: #b4b4b4;
+      --highlight: #ff4d6d;
+      --panel-bg: #1c1c1c;
+      --code-bg: #2e2e2e;
+      --transition-speed: 0.3s;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, var(--background-start), var(--background-end));
+      color: var(--text);
+      overflow-x: hidden;
+      text-align: center;
+      line-height: 1.6;
+      letter-spacing: 0.3px;
+    }
+
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: -1;
+    }
+
+    header {
+      padding: 2rem 1rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+    header h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+   }
+    nav a {
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: transform 0.3s ease, background-color var(--transition-speed), border var(--transition-speed);
+    }
+
+    nav a:hover {
+      transform: translateY(-4px);
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--primary);
+    }
+
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+    }
+
+    /* Frontend and Backend sections share the same glass-panel styling */
+    .frontend-section,
+    .backend-section {
+      background: var(--glass);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 4px 20px rgba(234, 103, 94, 0.05);
+      backdrop-filter: blur(4px);
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+    .frontend-section:hover,
+    .backend-section:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 25px rgba(234, 94, 94, 0.1);
+    }
+
+    section h2 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .container, .grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      width: 280px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 8px rgba(94, 234, 212, 0.08);
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+    .card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 6px 14px var(--primary);
+    }
+    .card h2, .card h3 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--primary); }
+    .card p { font-size: 0.95rem; color: var(--muted); }
+
+    /* Accordion */
+    .accordion-container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    .accordion {
+      background-color: #333; color: #fff; cursor: pointer;
+      padding: 1rem 1.5rem; width: 100%; text-align: left;
+      border: none; outline: none; font-size: 1.1rem; font-weight: bold;
+      transition: background-color var(--transition-speed);
+      border-radius: 5px; margin-bottom: 0.5rem;
+    }
+    .accordion:hover, .accordion.active { background-color: #444; }
+    .panel {
+      background-color: var(--panel-bg); max-height: 0; overflow: hidden;
+      padding: 0 1.5rem; border-radius: 0 0 5px 5px; margin-bottom: 2rem;
+      transition: max-height var(--transition-speed), padding var(--transition-speed);
+      border: 1px solid #444; border-top: none;
+    }
+    .panel.open { padding: 1rem 1.5rem; max-height: none; height: auto; }
+
+    pre {
+      background-color: var(--code-bg); padding: 1rem; border-radius: 5px;
+      overflow-x: auto; color: #f7f7f7; font-family: 'Courier New', monospace;
+      font-size: 0.9rem; white-space: pre-wrap; word-wrap: break-word;
+      margin-bottom: 1rem;
+    }
+    .code-desc {
+      padding: 1rem; background: var(--panel-bg);
+      border-left: 4px solid var(--highlight); font-size: 0.95rem;
+      text-align: left; border-radius: 0 0 5px 5px;
+    }
+
+    footer {
+      text-align: center; padding: 2rem 0; font-size: 0.9rem;
+      color: #888; border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    @media (max-width: 600px) {
+      nav { flex-direction: column; align-items: center; }
+      .container, .grid { flex-direction: column; align-items: center; }
+      .accordion { font-size: 1rem; padding: 0.75rem 1rem; }
+    }
+
+    /* Scroll Progress Bar */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 5px; width: 0;
+      background: var(--primary);
+      z-index: 9998;
+      transition: width 0.2s ease;
+    }
+
+    /* Page Loading Animation */
+    #loader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: var(--background-start);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .spinner {
+      width: 60px; height: 60px;
+      border: 6px solid rgba(255,255,255,0.2);
+      border-top: 6px solid var(--primary);
+      border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+  <div id="progress-bar"></div>
+  <div id="loader"><div class="spinner"></div></div>
+
+  <header><h1>Code Projects</h1></header>
+
+  <nav>
+    <a href="print design tab.html">Print Design</a>
+    <a href ="certifications tab.html">Certifications</a>
+    <a href="motion graphics tab.html">Motion Graphics</a>
+    <a href="code tab.html">Code</a>
+    <a href="shop work tab.html">IT Shop Work</a>
+    <a href="portfolio.html">Home</a>
+  </nav>
+
+  <main>
+    <!-- Frontend Section -->
+    <section class="frontend-section">
+      <h2>Frontend</h2>
+      <div class="grid">
+        <div class="card">
+          <h2>Responsive Web Layout</h2>
+          <p>Layouts and pages built with HTML and CSS.</p>
+        </div>
+        <div class="card">
+          <h2>Interactive Elements</h2>
+          <p>JavaScript and CSS animations to create dynamic UI elements.</p>
+        </div>
+      </div>
+      <div class="accordion-container">
+        <button class="accordion">Portfolio.html</button>
+        <div class="panel">
+          <pre><code><span style="color: var(--highlight);">index.html – Front-End Example</span>
+
+This snippet demonstrates the basic structure of the portfolio page.
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Portfolio&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Portfolio&lt;/h1&gt;
+  &lt;p&gt;A description would go here&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          <div class="code-desc">
+            <strong>Explanation:</strong> This HTML sets up the foundation of a responsive page with a semantic structure. The <code>&lt;meta name="viewport"&gt;</code> tag is crucial for ensuring mobile responsiveness.
+          </div>
+          <img src="images/codess1real.png" alt="Description of Image" class="image-class" />
+          <style>
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          </style>
+          
+        </div>
+        <button class="accordion">Certifications.html</button>
+        <div class="panel">
+          <pre><code><span style="color: var(--highlight);">Certifications – Front-End HTML</span>
+
+&lt;section&gt;
+  &lt;h2&gt;Certifications&lt;/h2&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Adobe Visual Design&lt;/li&gt;
+    &lt;li&gt;Google Project Management&lt;/li&gt;
+    &lt;li&gt;PC Pro&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/section&gt;</code></pre>
+          <div class="code-desc">
+            <strong>Explanation:</strong> This section lists certifications using semantic HTML elements. The <code>&lt;ul&gt;</code> ensures screen readers and search engines can parse it cleanly.
+          </div>
+          <img src="images/codess2real.png" alt="Description of Image" class="image-class" />
+          <style>
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          </style>
+          
+        </div>
+      </div>
+    </section>
+
+    <!-- Backend Section -->
+    <section class="backend-section">
+      <h2>Backend</h2>
+      <div class="grid">
+        <div class="card">
+          <h2>Discord Management Bot</h2>
+          <p>Built a bot in JavaScript to respond to server interactions and automate tasks.</p>
+        </div>
+        <div class="card">
+          <h2>Discord Command Bot</h2>
+          <p>Implemented backend logic to handle a custom bot to follow user instructions.</p>
+        </div>
+      </div>
+      <div class="accordion-container">
+        <button class="accordion">SQLite & (Privacy-preserving) Data Grabbing Responsive User-Based Bot</button>
+        <div class="panel">
+          <pre><code><span style="color: var(--highlight);">SQLite + Member Data – Example</span>
+
+import discord
+import sqlite3
+from discord.ext import commands
+
+bot = commands.Bot(command_prefix="!")
+
+conn = sqlite3.connect('members.db')
+cursor = conn.cursor()
+
+# Initialize database
+cursor.execute('''CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    join_date TEXT
+)''')
+conn.commit()
+
+@bot.event
+async def on_member_join(member):
+    cursor.execute("INSERT INTO users (id, name, join_date) VALUES (?, ?, ?)",
+                   (member.id, member.name, str(member.joined_at)))
+    conn.commit()
+
+bot.run('your_token')
+          </code></pre>
+          <div class="code-desc">
+            <strong>Definition:</strong> SQLite is a lightweight, serverless relational database stored as a single file. In this bot example, it holds member data—each user’s ID, name, and join date—by creating a table on startup and inserting a new record whenever a member joins, ensuring their information persists across bot restarts.
+          </div>
+          <img src="images/bot/sqlitegif.gif" alt="Description of Image" class="image-class" />
+        </div>
+      </div>
+
+      <div class="accordion-container">
+        <button class="accordion">MonkeyBot</button>
+        <div class="panel">
+          <pre><code><span style="color: var(--highlight);">Monkey – Example</span>
+
+import discord
+import random
+import asyncio
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = discord.Client(intents=intents)
+
+MONKEY_LINES = [
+"🙊 OOH OOH AAH AAH!",
+"🐒 Monkey see, monkey do!",
+"🙈 Speak no evil, spam no evil.",
+"🍌 Banana detected. Deploying extraction team.",
+"🐵 Monkey business detected!",
+"OOH OOH AAH AAH!",
+]
+
+MONKEY_GIFS = [
+"https://media.giphy.com/media/XRIHz2fqtdcsw/giphy.gif?cid=ecf05e475darwjqhzlfrx57b23ejeg2dkwxnhv6p33ahpnsn&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+"https://media.giphy.com/media/MOMOMPdOy52De/giphy.gif?cid=ecf05e47x9a9rin8qr9qgqk24p45gol4dzft7p661oe5rr7o&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+"https://media.giphy.com/media/76gdmaAuiTzEs/giphy.gif?cid=ecf05e47zdr0dom0cbup2zc447r807lj1vxe4u71gebpls19&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+"https://media.giphy.com/media/v9tMvVFBmx7uE/giphy.gif?cid=ecf05e47m4xyd0lqsl0yub9mcjqcyf2vpnck5yrqts27a95i&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+"https://media.giphy.com/media/zsuzRmOmm4OWI/giphy.gif?cid=ecf05e47xpwrfqq1rr5aw6pnnn2br865uii9xym8q1xd55qs&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+"https://media.giphy.com/media/6zXo5MAkNJwKQ/giphy.gif?cid=ecf05e47sddhepejri7n96bevgjuuem9bgqy5pckq6tez4lu&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+]
+
+SPAM_DELAY = 2  
+SPAM_COUNT = 6  
+
+@client.event
+async def on_ready():
+print(f"Bot connected as {client.user}")
+
+@client.event
+async def on_message(message):
+if message.author == client.user:
+return
+
+if message.content.lower().startswith("!monkeyspam"):
+await message.channel.send("🦧 Deploying monkey unit!")
+for _ in range(SPAM_COUNT):
+line = random.choice(MONKEY_LINES)
+gif = random.choice(MONKEY_GIFS)
+await message.channel.send(f"{line}\n{gif}")
+await asyncio.sleep(SPAM_DELAY)
+          </code></pre>
+          <div class="code-desc">
+            <strong>Definition:</strong> The implementation of Discord into Python for this bot is the use of the discord.py library, which enables communication between Python script + Discord's API, or an interface that allows developers to programmatically interact with the Discord application.
+          </div>
+          <img src="images/bot/monkeygif.gif" alt="Description of Image" class="image-class" />
+        </div>
+      </div>
+    </section>
+
+    <section id="color-randomizer" style=" 
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+  ">
+  <h2 style="color: #ff4d6d;">Random Color Generator</h2>
+
+  <div style="display: flex; justify-content: center; align-items: center; gap: 2rem; margin: 2rem 0;">
+    <div id="color-box" style="
+      width: 180px;
+      height: 180px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background-color: #ffffff;
+      transition: background-color 0.3s ease;
+    "></div>
+
+    <div style="text-align: left;">
+      <p style="font-size: 1.1rem; margin: 0;">HEX: <span id="hex-code" style="font-weight: bold;">#FFFFFF</span></p>
+      <p style="font-size: 1.1rem; margin: 0.5rem 0 0;">Colors Generated: <span id="color-count" style="font-weight: bold;">0</span></p>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: center; gap: 1rem;">
+    <button onclick="generateColor()" style="
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      border: none;
+      background-color: #ff4d6d;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    " onmouseover="this.style.backgroundColor='#e13b58'" onmouseout="this.style.backgroundColor='#ff4d6d'">
+      Generate Color
+    </button>
+
+    <button onclick="resetCounter()" style="
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      border: none;
+      background-color: #444;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    " onmouseover="this.style.backgroundColor='#333'" onmouseout="this.style.backgroundColor='#444'">
+      Reset
+    </button>
+  </div>
+
+  <!-- Expandable Description Section -->
+  <div style="margin-top: 3rem;">
+    <button onclick="toggleDescription()" style="
+      margin-bottom: 1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      border: none;
+      background-color: #ff4db8;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    " onmouseover="this.style.backgroundColor='#ff4d4d'" onmouseout="this.style.backgroundColor='#ff4db8'">
+      See more
+    </button>
+
+    <div id="description-box" style="
+      display: none;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      text-align: left;
+      transition: all 0.3s ease;
+    ">
+      <h3 style="color: #ff4db8;">How It Works:</h3>
+      <pre style="
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 1rem;
+        border-radius: 12px;
+        color: #dcdcdc;
+        overflow-x: auto;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      ">
+// Example JavaScript function
+function generateColor() {
+  const hex = "#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+  document.getElementById("color-box").style.backgroundColor = hex;
+  document.getElementById("hex-code").textContent = hex.toUpperCase();
+  count++;
+  document.getElementById("color-count").textContent = count;
+}
+      </pre>
+
+      <p style="margin-top: 1rem; font-size: 1rem; color: #ccc;">
+        The <code>generateColor()</code> function creates a random HEX color, updates the display box, and increments the counter. The color is generated using <code>Math.random()</code> and formatted into a 6-character HEX string.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Declare global state variables just once
+  let count = 0;
+  let descriptionVisible = false;
+
+  // Function to generate a random color
+  function generateColor() {
+    const hex = "#" + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+    document.getElementById("color-box").style.backgroundColor = hex;
+    document.getElementById("hex-code").textContent = hex.toUpperCase();
+    count++;
+    document.getElementById("color-count").textContent = count;
+  }
+
+  // Function to reset the color generator
+  function resetCounter() {
+    count = 0;
+    document.getElementById("color-count").textContent = count;
+    document.getElementById("color-box").style.backgroundColor = "#FFFFFF";
+    document.getElementById("hex-code").textContent = "#FFFFFF";
+  }
+
+  // Toggle visibility of the description section
+  function toggleDescription() {
+    const box = document.getElementById("description-box");
+    descriptionVisible = !descriptionVisible;
+    box.style.display = descriptionVisible ? "block" : "none";
+  }
+</script>
+
+
+  
+ 
+<section id="simple-counter" style="
+max-width: 800px;
+margin: 3rem auto;
+padding: 2rem;
+background: rgba(255, 255, 255, 0.03);
+border-radius: 20px;
+box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(10px);
+color: white;
+font-family: 'Montserrat', sans-serif;
+text-align: center;
+">
+<h2 style="color: #ff4d6d;">Number Counter</h2>
+
+<div style="display: flex; justify-content: center; align-items: center; gap: 2rem; margin: 2rem 0;">
+  <div style="text-align: left;">
+    <p style="font-size: 1.1rem; margin: 0;">Count: <span id="simple-counter-value" style="font-weight: bold;">0</span></p>
+  </div>
+</div>
+
+<div style="display: flex; justify-content: center; gap: 1rem;">
+  <button onclick="incrementCounter()" style="
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    background-color: #ff4d6d;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  " onmouseover="this.style.backgroundColor='#e13b58'" onmouseout="this.style.backgroundColor='#ff4d6d'">
+    Increment Count
+  </button>
+
+  <button onclick="resetSimpleCounter()" style="
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    background-color: #444;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  " onmouseover="this.style.backgroundColor='#333'" onmouseout="this.style.backgroundColor='#444'">
+    Reset
+  </button>
+</div>
+
+<!-- Expandable Description Section -->
+<div style="margin-top: 3rem;">
+  <button onclick="toggleSimpleDescription()" style="
+    margin-bottom: 1rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    background-color: #ff4db8;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  " onmouseover="this.style.backgroundColor='#ff4d4d'" onmouseout="this.style.backgroundColor='#ff4db8'">
+    See more
+  </button>
+
+  <div id="simple-description-box" style="
+    display: none;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    text-align: left;
+    transition: all 0.3s ease;
+  ">
+    <h3 style="color: #ff4db8;">How It Works</h3>
+    <pre style="
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 12px;
+      color: #dcdcdc;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    ">
+// Example JavaScript
+let simpleCount = 0;
+
+function incrementCounter() {
+simpleCount++;
+document.getElementById("simple-counter-value").textContent = simpleCount;
+}
+
+function resetSimpleCounter() {
+simpleCount = 0;
+document.getElementById("simple-counter-value").textContent = simpleCount;
+}
+    </pre>
+
+    <p style="margin-top: 1rem; font-size: 1rem; color: #ccc;">
+      This simple counter uses a variable <code>simpleCount</code> to track the current value. Each time you click the increment button, the value goes up and is displayed. Reset sets it back to zero.
+    </p>
+  </div>
+</div>
+</section>
+
+<script>
+  let simpleCount = 0;
+  let simpleDescVisible = false;
+
+  function incrementCounter() {
+    simpleCount++;
+    document.getElementById("simple-counter-value").textContent = simpleCount;
+  }
+
+  function resetSimpleCounter() {
+    simpleCount = 0;
+    document.getElementById("simple-counter-value").textContent = simpleCount;
+  }
+
+  function toggleSimpleDescription() {
+    const box = document.getElementById("simple-description-box");
+    simpleDescVisible = !simpleDescVisible;
+    box.style.display = simpleDescVisible ? "block" : "none";
+  }
+</script>
+
+<section id="cookie-clicker" style="
+max-width: 800px;
+margin: 3rem auto;
+padding: 2rem;
+background: rgba(255, 255, 255, 0.03);
+border-radius: 20px;
+box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+border: 1px solid rgba(255, 255, 255, 0.1);
+backdrop-filter: blur(10px);
+color: white;
+font-family: 'Montserrat', sans-serif;
+text-align: center;
+">
+<h2 style="color: #ff4d6d;">CLICK ME</h2>
+
+<div style="display: flex; justify-content: center; gap: 2rem; margin: 2rem 0;">
+  <img id="image1" src="images/cat1.png" alt="Image 1" style="
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: block;
+  " onclick="bounceImage(this)"/>
+
+  <img id="image2" src="images/cat2.png" alt="Image 2" style="
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: none;
+  " onclick="bounceImage(this)"/>
+</div>
+
+<div style="font-size: 1.2rem; color: white;">
+  <p>Click Count: <span id="click-count">0</span></p>
+</div>
+
+<!-- Expandable Description Section -->
+<div style="margin-top: 3rem;">
+  <button onclick="toggleClickerDescription()" style="
+    margin-bottom: 1rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    background-color: #ff4db8;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  " onmouseover="this.style.backgroundColor=' #ff4d4d'" onmouseout="this.style.backgroundColor='#ff4db8'">
+    See more                 
+  </button>
+
+  <div id="clicker-description-box" style="
+    display: none;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    text-align: left;
+    transition: all 0.3s ease;
+  ">
+    <h3 style="color: #ff4db8;">How It Works</h3>
+    <pre style="
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 12px;
+      color: #dcdcdc;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    ">
+// JavaScript Example
+let clickCount = 0;
+
+function bounceImage(img) {
+clickCount++;
+document.getElementById("click-count").textContent = clickCount;
+
+// Toggle images
+const img1 = document.getElementById("image1");
+const img2 = document.getElementById("image2");
+img1.style.display = img1.style.display === "none" ? "block" : "none";
+img2.style.display = img2.style.display === "none" ? "block" : "none";
+
+// Add bounce animation (optional)
+img.classList.add("bounce");
+setTimeout(() => img.classList.remove("bounce"), 300);
+}
+    </pre>
+
+    <p style="margin-top: 1rem; font-size: 1rem; color: #ccc;">
+      Clicking on either cat image increases the click count and swaps to the other image.
+      The <code>bounceImage()</code> function also supports adding a quick animation effect for a more interactive feel.
+    </p>
+  </div>
+</div>
+</section>
+
+<footer style="
+margin-top: 2rem;
+font-size: 0.9rem;
+color: white;
+text-align: center;
+padding: 0.5rem;
+background-color: rgba(0, 0, 0, 0.1);
+border-radius: 8px;
+display: inline-block;
+width: 100%;
+">
+<p>Art by Jackson Hungerford | <a href="https://jacksonhungerford1079062.github.io/portfolio-test-1/index.html" style="color: #ff4d6d; text-decoration: none;">See Portfolio</a></p>
+</footer>
+
+<script>
+  let clickCount = 0;
+  let clickerDescVisible = false;
+
+  function bounceImage(img) {
+    clickCount++;
+    document.getElementById("click-count").textContent = clickCount;
+
+    const img1 = document.getElementById("image1");
+    const img2 = document.getElementById("image2");
+
+    if (img === img1) {
+      img1.style.display = "none";
+      img2.style.display = "block";
+    } else {
+      img2.style.display = "none";
+      img1.style.display = "block";
+    }
+
+    img.classList.add("bounce");
+    setTimeout(() => img.classList.remove("bounce"), 300);
+  }
+
+  function toggleClickerDescription() {
+    const box = document.getElementById("clicker-description-box");
+    clickerDescVisible = !clickerDescVisible;
+    box.style.display = clickerDescVisible ? "block" : "none";
+  }
+</script>
+
+<style>
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .bounce {
+    animation: bounce 0.3s ease;
+  }
+</style>
+
+  
+  </main>
+
+  <footer>
+    <p>&copy; Emmy 2025</p>
+  </footer>
+
+  <!-- Starfield Background Script -->
+  <script>
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    let width, height;
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    const stars = [];
+    const starCount = 100;
+    for (let i = 0; i < starCount; i++) {
+      stars.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 1.2 + 0.5,
+        dx: (Math.random() - 0.5) * 0.2,
+        dy: (Math.random() - 0.5) * 0.2
+      });
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < starCount; i++) {
+        const star = stars[i];
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        for (let j = i + 1; j < starCount; j++) {
+          const other = stars[j];
+          const dx = star.x - other.x;
+          const dy = star.y - other.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.moveTo(star.x, star.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.strokeStyle = "rgba(255,255,255,0.1)";
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+        star.x += star.dx;
+        star.y += star.dy;
+        if (star.x < 0 || star.x > width) star.dx *= -1;
+        if (star.y < 0 || star.y > height) star.dy *= -1;
+      }
+      requestAnimationFrame(drawStars);
+    }
+    drawStars();
+
+    // Accordion toggle
+    document.querySelectorAll('.accordion').forEach(acc => {
+      acc.addEventListener('click', () => {
+        acc.classList.toggle('active');
+        const panel = acc.nextElementSibling;
+        panel.classList.toggle('open');
+      });
+    });
+
+    // Scroll Progress Bar
+    window.addEventListener("scroll", () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      document.getElementById("progress-bar").style.width = `${progress}%`;
+    });
+
+    // Page Loader
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("loader");
+      if (loader) {
+        loader.style.opacity = 0;
+        loader.style.pointerEvents = "none";
+        setTimeout(() => loader.remove(), 500);
+      }
+    });
+  </script>
+</body>
+</html>
